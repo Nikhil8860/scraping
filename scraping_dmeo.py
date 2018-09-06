@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import json
 
 """def extract_data_web():
     try:
@@ -43,22 +44,15 @@ write_data_csv()"""
 
 
 
-def extract_data():
-    hotel_name=[]
+def extract_url():
     hotel_url=[]
-    hotel_address=[]
     for i in range(1,58):
         data=requests.get('https://www.wedmegood.com/vendors/all/wedding-venues/?page='+str(i)+'')
         soup=BeautifulSoup(data.text,'html.parser')
         for s in soup.find_all('a', {'class': ['vendor-detail text-bold h6']}):
-            hotel_name.append(s.text)
             hotel_url.append('https://www.wedmegood.com'+s['href'])
-        for a in soup.find_all('p',class_='vendor-detail'):
-            hotel_address.append(a.text)
 
-    return hotel_name,hotel_address,hotel_url
-
-
+    return hotel_url
 
 def all_data():
     hotel_name=[]
@@ -67,26 +61,29 @@ def all_data():
     hotel_about=[]
     hotel_rating=[]
 
-    name, address, url = extract_data()
+    url = extract_url()
     for all in url:
         data = requests.get(all)
         soup = BeautifulSoup(data.text, 'html.parser')
         for n in soup.find_all('h1', {'class': ['vendor-details h4 text-bold']}):
             hotel_name.append(n.text)
-
         for a in soup.find_all('p', {'class': ['text-tertiary']}):
             hotel_addr.append(a.text)
 
         for p in soup.find_all('h6', {'class': ['h6 green']}):
             hotel_phone.append(p.text)
 
-        for rating in soup.find_all('span', {'class': ['StarRating center rating-4 h4 large']}):
+        for rating in soup.find_all('h6', {'class': ['h6 review-cnt nowrap']}):
             hotel_rating.append(rating.text)
 
         for descr in soup.find_all('div', {'class': ['info padding-h-20 padding-v-20']}):
             hotel_about.append(descr.text)
 
-    return hotel_name,hotel_addr,hotel_phone,hotel_rating,hotel_about
+    print(hotel_addr)
+    print(hotel_phone)
+    print(hotel_name)
+    print(hotel_rating)
+    print(hotel_about)
 
 def csv_dump():
     hotel_name, hotel_addr, hotel_phone, hotel_rating, hotel_about=all_data()
@@ -98,9 +95,12 @@ def csv_dump():
         print("Write success")
 
 import pandas as pd
-try:
-    df=pd.read_csv('..\\resource\\employee_file.csv')
-    print(df)
-except FileNotFoundError as e:
-    print(e)
-#testing 2
+def read_csv():
+    try:
+        df=pd.read_csv('..\\resource\\employee_file.csv')
+        print(df)
+    except FileNotFoundError as e:
+        print(e)
+
+
+
