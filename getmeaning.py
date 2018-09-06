@@ -1,11 +1,9 @@
 # Author: NIKHIL SHARMA
+#DATE:7/9/2016
 # This script helps us to enter a word and get precise meaning for that word from vocabulary.com
-
 import urllib.request
 from bs4 import BeautifulSoup
-
 word = input('Enter the word of which you want to find the meaning: ')
-
 # Get the meaning by scrapping www.vocabulary.com
 url = "https://www.vocabulary.com/dictionary/" + word + ""
 htmlfile = urllib.request.urlopen(url)
